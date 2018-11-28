@@ -9,12 +9,22 @@
 .LINK
      https://www.marcwils.be.eu.org
 #>
+$ErrorActionPreference = "Stop"
 
 # Variables
-$openSsl = "C:\Tools\OpenSSL-Win64\bin\openssl.exe"
-$targetHost = "localhost"
+$openSsl = "C:\Program Files\OpenSSL-Win64\bin\openssl.exe"
+$targetHost = "test.rebex.net"
 $targetPort = "21"
 $ianaList = "https://www.iana.org/assignments/tls-parameters/tls-parameters-4.csv"
+
+# Start script and perform sanity checks
+& cls 
+if (!(Test-Path $openSsl)){
+    Write-Error "OpenSSL.exe not found"
+} else {
+    $openSslVersion = & $openssl version
+    Write-Host "Using $openSslVersion"
+}
 
 # Script start
 Set-StrictMode -Version Latest
@@ -26,15 +36,12 @@ $ciphers = & $openSsl ciphers -V | ConvertFrom-String -PropertyNames a,Code,b,Na
 # Read list from IANA to do translations
 $ianaCiphers = (Invoke-WebRequest -Uri $ianaList -Method Get).Content 
 
-# Clear screen
-& cls 
-Write-Host "Enumerating ciphers"
-
 # Try each cipher to connect
+Write-Host "Enumerating ciphers"
 foreach ($cipher in $ciphers){
     $cipherName = $cipher.Name
     $cipherCode = $cipher.Code
-    $connectLog = & $openssl s_client -cipher $cipherName -connect ${targetHost}:${targetPort} -starttls ftp 2>&1
+    $connectLog = echo QUIT | & $openssl s_client -cipher $cipherName -connect ${targetHost}:${targetPort} -starttls ftp 2>&1
     
     $ianaCipher =  [regex]::Match($ianaCiphers, """(?<code>$cipherCode""),(?<name>\S*),(.*),(.*),(.*)", [System.Text.RegularExpressions.RegexOptions]::Multiline).Groups["name"].Value
     
