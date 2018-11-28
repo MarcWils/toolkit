@@ -1,5 +1,5 @@
 ﻿<# .SYNOPSIS
-     Enumerate ciphers supported by an FTP(ES) server.
+     Enumerate ciphers supported by an FTP(S) server.
 .DESCRIPTION
      Uses all ciphers supported by OpenSSL to test the SSL/TLS configuration of an FTP server using Explicit SSL.
 
