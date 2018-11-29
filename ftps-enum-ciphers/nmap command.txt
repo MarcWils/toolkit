@@ -1,0 +1,1 @@
+nmap.exe -sT -p 21 -Pn --script ssl-enum-ciphers <host>
