@@ -3,5 +3,5 @@
 ## ftps-enum-ciphers
 Enumerate ciphers supported by an FTP(S) server.
 
-## sql-toolit
+## sql-toolkit
 Useful SQL queries for debugging performance issues.
